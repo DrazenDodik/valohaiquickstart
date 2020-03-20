@@ -2,6 +2,8 @@ from werkzeug.wrappers import Request, Response
 import io
 import numpy
 from PIL import Image
+import tensorflow as tf
+import json
 
 # Location of our model
 model_path = 'model.h5'
