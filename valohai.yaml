@@ -1,0 +1,19 @@
+---
+
+- step:
+    name: Train MNIST model
+    image: tensorflow/tensorflow:2.0.1-gpu-py3
+    command: python train.py {parameters}
+    inputs:
+        - name: my-mnist-dataset
+          #default: {datum://id} 
+          default: https://storage.googleapis.com/tensorflow/tf-keras-datasets/mnist.npz
+- endpoint:
+    name: digit-predict
+    description: predict digits from image inputs
+    image: tensorflow/tensorflow:2.0.1-py3
+    wsgi: predict:mypredictor
+    files:
+        - name: model
+          description: Model output file from TensorFlow
+          path: model.h5
