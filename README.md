@@ -1,6 +1,8 @@
 # Valohai Quickstart 🦈✨
 This tutorial is aimed to help you get a fast-start with key Valohai features.
 
+>:exclamation: Full tutorial available at [docs.valohai.com](https://docs.valohai.com/tutorials/valohai/)
+
 ## Before you start
 
 * Make sure you have Python 3 and pip installed on your machine
