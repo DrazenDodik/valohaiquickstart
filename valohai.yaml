@@ -8,6 +8,13 @@
         - name: my-mnist-dataset
           #default: {datum://id} 
           default: https://storage.googleapis.com/tensorflow/tf-keras-datasets/mnist.npz
+    parameters:
+      - name: epochnum
+        type: integer
+        default: 5
+      - name: learningrate
+        type: float
+        default: 0.001
 - endpoint:
     name: digit-predict
     description: predict digits from image inputs
