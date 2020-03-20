@@ -2,6 +2,24 @@ import tensorflow as tf
 import os
 import json
 import numpy
+import argparse
+
+
+def getArgs():
+    # Initialize the ArgumentParser
+    parser = argparse.ArgumentParser()
+    # Define two arguments that it should parse
+    parser.add_argument('--epochnum', type=int, default=5)
+    parser.add_argument('--learningrate', type=float, default=0.001)
+
+    # Now run the parser that will return us the arguments and their values and store in our variable args
+    args = parser.parse_args()
+
+    # Return the parsed arguments
+    return args
+
+# Call our newly created getArgs() function and store the parsed arguments in a variable args. We can later access the values through it, for example args.learningrate
+args = getArgs()
 
 # A function to write JSON to our output logs
 # with the epoch number with the loss and accuracy from each run.
@@ -46,11 +64,11 @@ loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 
 loss_fn(y_train[:1], predictions).numpy()
 
-model.compile(optimizer='adam',
-            loss=loss_fn,
-            metrics=['accuracy'])
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=args.learningrate),
+        loss=loss_fn,
+        metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=5, callbacks=[metadataCallback])
+model.fit(x_train, y_train, epochs=args.epochnum, callbacks=[metadataCallback])
 
 # Save our model to that the output as model.h5
 # /valohai/outputs/model.h5
