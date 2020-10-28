@@ -1,0 +1,60 @@
+- step:
+    name: Preprocess data
+    image: python:3.6
+    command:
+      - pip install numpy==1.18.1
+      - python preprocess.py
+    inputs:
+      - name: my-raw-mnist-dataset
+        #default: {datum://id}
+        default: https://storage.googleapis.com/tensorflow/tf-keras-datasets/mnist.npz
+        
+- step:
+    name: Train MNIST model
+    image: tensorflow/tensorflow:2.0.1-gpu-py3
+    command: python train.py
+    inputs:
+      - name: my-processed-mnist-dataset
+        #default: {datum://id}
+        default: https://storage.googleapis.com/tensorflow/tf-keras-datasets/mnist.npz
+
+- endpoint:
+    name: digit-predict
+    description: predict digits from image inputs
+    image: tensorflow/tensorflow:2.0.1-py3
+    wsgi: predict:mypredictor
+    files:
+        - name: model
+          description: Model output file from TensorFlow
+          path: model.h5
+
+- pipeline:
+    name: Training pipeline
+    nodes:
+      - name: preprocess-node
+        type: execution
+        step: Preprocess data
+      - name: train-node
+        type: execution
+        step: Train MNIST model
+    edges:
+      - [preprocess-node.output.*.npz, train-node.input.my-processed-mnist-dataset]
+
+- pipeline:
+    name: Train and deploy pipeline
+    nodes:
+      - name: preprocess-node
+        type: execution
+        step: Preprocess data
+      - name: train-node
+        type: execution
+        step: Train MNIST model
+      - name: deploy-node
+        type: deployment
+        deployment: predict-digit
+        endpoints:
+          - predict-digit
+    edges:
+      - [preprocess-node.output.*.npz, train-node.input.my-processed-mnist-dataset]
+      - [train-node.output.model*, deploy-node.input.predict-digit.model]
+  
